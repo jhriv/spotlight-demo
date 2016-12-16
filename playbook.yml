@@ -1,0 +1,102 @@
+---
+
+- hosts: spotlight
+
+  vars:
+    app_dir: blacklight
+
+  roles:
+    #- ucsdlib.java
+    - { role: 'ucsdlib.solr', solr_version: '6.3.0', become: true }
+    #- zzet.rbenv
+
+  pre_tasks:
+    - name: "Add /usr/local to sudo's path"
+      lineinfile:
+        dest: /etc/sudoers.d/securepath
+        line: 'Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin'
+        state: present
+        create: yes
+      when: false
+
+    - name: "Set hostname"
+      command: 'hostname {{ inventory_hostname }}'
+      changed_when: false
+      become: true
+
+  tasks:
+    - name: "Add Brightbox PPA (Ruby 2.2)"
+      apt_repository:
+        repo: 'ppa:brightbox/ruby-ng'
+        state: present
+      become: true
+
+    - name: "Use Ruby 2.2"
+      package:
+        name: ruby2.2
+        state: present
+      become: true
+
+    - name: "Install build deps"
+      package:
+        name: '{{ item }}'
+        state: present
+      become: true
+      with_items:
+        - ruby2.2-dev
+        - zlib1g-dev
+        - libsqlite3-dev
+        - build-essential
+
+    - name: "Install solr_wrapper"
+      gem:
+        name: solr_wrapper
+        user_install: false
+      become: true
+
+    - name: "Install rails"
+      gem:
+        name: rails
+        version: 5.0.0.1
+        user_install: false
+      become: true
+
+    - name: 'Create new rails application'
+      command: 'rails new {{ app_dir }}'
+      args:
+          creates: '{{ app_dir }}'
+
+    - name: 'Add blacklight to Gemfile'
+      lineinfile:
+        dest: '{{ app_dir }}/Gemfile'
+        line: 'gem "blacklight", "~> 6.0"'
+        state: present
+
+    - name: 'Add a JavaScript Runtime'
+      lineinfile:
+        dest: '{{ app_dir }}/Gemfile'
+        line: '{{ item }}'
+        regexp: '^(#\s*|){{ item }}$'
+        state: present
+      with_items:
+        - "gem 'therubyracer', platforms: :ruby"
+
+    - name: 'Update Bundle'
+      command: 'bundle install'
+      args:
+        chdir: '{{ app_dir }}'
+        #creates: 'Gemfile.lock'
+        #No good way to determine what is going on with bundler.
+
+    - name: 'Install blacklight, with Devise'
+      command: 'rails generate blacklight:install --devise --marc --solr_version=latest'
+      args:
+        chdir: '{{ app_dir }}'
+        creates: 'config/blacklight.yml'
+
+    - name: 'Initial database migrate'
+      command: 'rake db:migrate'
+      args:
+        chdir: '{{ app_dir }}'
+      register: rake_out
+      changed_when: rake_out.stdout != ''
