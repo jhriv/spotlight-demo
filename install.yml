@@ -2,8 +2,8 @@
 
 - hosts: spotlight
 
-  vars:
-    app_dir: blacklight
+  vars_files:
+    - vars.yml
 
   roles:
     #- ucsdlib.java
