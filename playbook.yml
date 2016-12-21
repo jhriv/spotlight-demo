@@ -25,6 +25,13 @@
       become: true
 
   tasks:
+    - name: 'Start Solr'
+      service:
+        name: solr
+        state: running
+        #use: service
+      become: true
+
     - name: "Add Brightbox PPA (Ruby 2.2)"
       apt_repository:
         repo: 'ppa:brightbox/ruby-ng'
@@ -53,6 +60,7 @@
         name: solr_wrapper
         user_install: false
       become: true
+      when: false
 
     - name: "Install rails"
       gem:
@@ -100,3 +108,10 @@
         chdir: '{{ app_dir }}'
       register: rake_out
       changed_when: rake_out.stdout != ''
+
+    - name: 'Create Solr Core'
+      command: /opt/solr/bin/solr create -c blacklight-core
+      args:
+         creates: /var/solr/data/blacklight-core
+      become: true
+      become_user: solr
