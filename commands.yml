@@ -1,0 +1,37 @@
+---
+
+- hosts: spotlight
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+    # Document commands
+    - block:
+      - name: Command specified
+        assert:
+          that: command is defined
+
+      rescue:
+        - debug:
+            msg: |
+              Use "-e command=<command>" to perform the following tasks:
+                start: start the blacklight server
+                stop: stop the blacklight server
+
+    - name: Start the Spotlight server
+      command: rails server --binding=0.0.0.0 --daemon
+      args:
+        chdir: '{{ app_dir }}'
+      when: command == 'start'
+
+    - name: Get running Spotlight PID
+      command: cat '{{ app_dir }}/tmp/pids/server.pid'
+      register: spotlight_pid
+      changed_when: false
+      when: command == 'stop'
+
+    - name: Stop the Spotlight server
+      command: kill --signal=INT '{{ spotlight_pid.stdout }}'
+      when: command == 'stop'

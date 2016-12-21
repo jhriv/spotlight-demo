@@ -1,0 +1,16 @@
+---
+
+- hosts: spotlight
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Allow IP block to web console
+      blockinfile:
+        block: |
+          class Application < Rails::Application
+            config.web_console.whitelisted_ips = '{{ netblock }}'
+          end
+        state: present
+        dest: '{{ app_dir }}/config/environments/development.rb'
