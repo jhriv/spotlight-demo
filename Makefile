@@ -1,7 +1,7 @@
 WHOAMI := $(lastword $(MAKEFILE_LIST))
 SSHCONFIG=.ssh-config
 INVENTORY=hosts
-VERSION=0.2.0
+VERSION=0.2.2
 .PHONY: menu all up roles force-roles ping ip update version
 
 menu:
@@ -29,10 +29,9 @@ roles: $(wildcard roles.yml config/roles.yml)
 	@echo 'Downloading roles'
 	@ansible-galaxy install --role-file=$< --roles-path=roles
 
-force-roles:
-	@echo 'Downloading roles'
+force-roles: $(wildcard roles.yml config/roles.yml)
+	@echo 'Downloading roles (forced)'
 	@ansible-galaxy install --role-file=$< --roles-path=roles --force
-
 
 ansible.cfg: $(SSHCONFIG) $(INVENTORY)
 	@echo "Creating $@"
@@ -58,7 +57,8 @@ $(INVENTORY): $(wildcard .vagrant/machines/*/*/id) Vagrantfile
 
 Vagrantfile:
 	@echo 'Either use "vagrant init <box>" to create a Vagrantfile,'
-	@echo 'or "cp Vagrantfile.sample Vagrantfile"'
+	@echo '"cp Vagrantfile.sample Vagrantfile" if you cloned the repo, or download'
+	@echo 'https://github.com/jhriv/vagrant-as-infrastructure/raw/master/Vagrantfile.sample'
 	@false
 
 ping:
