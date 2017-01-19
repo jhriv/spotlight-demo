@@ -110,8 +110,11 @@
       changed_when: rake_out.stdout != ''
 
     - name: 'Create Solr Core'
-      command: /opt/solr/bin/solr create -c blacklight-core
+      command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/conf
       args:
-         creates: /var/solr/data/blacklight-core
+         chdir: '{{ app_dir }}'
+         creates: /var/solr/data/{{ solr_core | default ("blacklight-core") }}
       become: true
       become_user: solr
+      tags:
+         - solr_core
