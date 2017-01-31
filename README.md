@@ -18,3 +18,10 @@ This playbook uses the ["hard way"](https://github.com/projectblacklight/blackli
 * `install.yml` Installs and starts Solr, sets up the Blacklight rails Application
 * `config.yml` Allows the local network to access the console
 * `commands.yml` Starts and stops the rails server
+
+
+
+## TODO BEFORE PRODUCTION
+
+[ ] Replace sqlite with PostgreSQL
+[ ] Create proper build -> deploy toolchain
