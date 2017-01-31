@@ -55,19 +55,25 @@
         - libsqlite3-dev
         - build-essential
 
-    - name: "Install solr_wrapper"
-      gem:
-        name: solr_wrapper
-        user_install: false
+    - name: "Install additional deps"
+      package:
+        name: '{{ item }}'
+        state: present
       become: true
-      when: false
+      with_items:
+        - nodejs
+        - git
 
-    - name: "Install rails"
+    - name: "Install System Gems"
       gem:
-        name: rails
-        version: 5.0.0.1
+        name: '{{ item.gem }}'
+        version: '{{ item.version | default ("") }}'
         user_install: false
       become: true
+      with_items:
+        #- { gem: 'solr_wrapper' }
+        - { gem: 'bundler', version: '1.12.0' }
+        - { gem: 'rails', version: '5.0.0.1' }
 
     - name: 'Create new rails application'
       command: 'rails new {{ app_dir }}'
@@ -77,30 +83,44 @@
     - name: 'Add blacklight to Gemfile'
       lineinfile:
         dest: '{{ app_dir }}/Gemfile'
-        line: 'gem "blacklight", "~> 6.0"'
-        state: present
-
-    - name: 'Add a JavaScript Runtime'
-      lineinfile:
-        dest: '{{ app_dir }}/Gemfile'
         line: '{{ item }}'
-        regexp: '^(#\s*|){{ item }}$'
         state: present
       with_items:
-        - "gem 'therubyracer', platforms: :ruby"
+        - 'gem "blacklight", "~> 6.0"'
+        - 'gem "blacklight-spotlight", "0.31.0"'
 
     - name: 'Update Bundle'
       command: 'bundle install'
       args:
         chdir: '{{ app_dir }}'
-        #creates: 'Gemfile.lock'
-        #No good way to determine what is going on with bundler.
+      register: bundle
+      changed_when: '"Installing" in bundle.stdout'
 
     - name: 'Install blacklight, with Devise'
-      command: 'rails generate blacklight:install --devise --marc --solr_version=latest'
+      command: 'rails generate blacklight:install --devise'
       args:
         chdir: '{{ app_dir }}'
         creates: 'config/blacklight.yml'
+
+    - name: 'Install spotlight'
+      command: 'rails generate spotlight:install -f --openseadragon --mailer_default_url_host=localhost:3000'
+      args:
+        chdir: '{{ app_dir }}'
+        creates: 'config/sitemap.rb'
+      # Very uncomfortable with this creates flag
+
+    - name: 'Update bundle, again'
+      command: 'bundle install'
+      args:
+        chdir: '{{ app_dir }}'
+      register: bundle
+      changed_when: '"Installing" in bundle.stdout'
+
+    - name: 'Migrate Blacklight to Spotlight'
+      command: 'rake spotlight:install:migrations'
+      args:
+        chdir: '{{ app_dir }}'
+        creates: db/schema.rb
 
     - name: 'Initial database migrate'
       command: 'rake db:migrate'
