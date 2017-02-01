@@ -23,5 +23,12 @@ This playbook uses the ["hard way"](https://github.com/projectblacklight/blackli
 
 ## TODO BEFORE PRODUCTION
 
+Mandatory:
+
 [ ] Replace sqlite with PostgreSQL
 [ ] Create proper build -> deploy toolchain
+[ ] AD/LDAP Integration
+
+Optional:
+
+[ ] UCSD Asset Themeing
