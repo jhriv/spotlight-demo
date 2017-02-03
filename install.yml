@@ -7,22 +7,8 @@
 
   roles:
     #- ucsdlib.java
-    - { role: 'ucsdlib.solr', solr_version: '6.3.0', become: true }
+    - { role: 'ucsdlib.solr', solr_version: '{{ solr_indexer_version }}', become: true }
     #- zzet.rbenv
-
-  pre_tasks:
-    - name: "Add /usr/local to sudo's path"
-      lineinfile:
-        dest: /etc/sudoers.d/securepath
-        line: 'Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin'
-        state: present
-        create: yes
-      when: false
-
-    - name: "Set hostname"
-      command: 'hostname {{ inventory_hostname }}'
-      changed_when: false
-      become: true
 
   tasks:
     - name: 'Start Solr'
@@ -72,22 +58,22 @@
       become: true
       with_items:
         #- { gem: 'solr_wrapper' }
-        - { gem: 'bundler', version: '1.12.0' }
-        - { gem: 'rails', version: '5.0.0.1' }
+        - { gem: 'bundler', version: '{{ bundler_version }}' }
+        - { gem: 'rails', version: '{{ rails_version }}' }
 
     - name: 'Create new rails application'
       command: 'rails new {{ app_dir }}'
       args:
           creates: '{{ app_dir }}'
 
-    - name: 'Add blacklight to Gemfile'
+    - name: 'Add Spotlight to Gemfile'
       lineinfile:
         dest: '{{ app_dir }}/Gemfile'
         line: '{{ item }}'
         state: present
       with_items:
-        - 'gem "blacklight", "~> 6.0"'
-        - 'gem "blacklight-spotlight", "0.31.0"'
+        - 'gem "blacklight", "{{ blacklight_version }}"'
+        - 'gem "blacklight-spotlight", "{{ spotlight_version }}"'
 
     - name: 'Update Bundle'
       command: 'bundle install'
@@ -96,14 +82,14 @@
       register: bundle
       changed_when: '"Installing" in bundle.stdout'
 
-    - name: 'Install blacklight, with Devise'
-      command: 'rails generate blacklight:install --devise'
+    - name: 'Install Blacklight'
+      command: 'rails generate blacklight:install {{ blacklight_options }}'
       args:
         chdir: '{{ app_dir }}'
         creates: 'config/blacklight.yml'
 
-    - name: 'Install spotlight'
-      command: 'rails generate spotlight:install -f --openseadragon --mailer_default_url_host=localhost:3000'
+    - name: 'Install Spotlight'
+      command: 'rails generate spotlight:install {{ spotlight_options }}'
       args:
         chdir: '{{ app_dir }}'
         creates: 'config/sitemap.rb'
