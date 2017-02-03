@@ -28,6 +28,7 @@ Mandatory:
 [ ] Replace sqlite with PostgreSQL
 [ ] Create proper build -> deploy toolchain
 [ ] AD/LDAP Integration
+[ ] Compare / Contrast Apache Proxy with Phusion Passenger or the like
 
 Optional:
 
