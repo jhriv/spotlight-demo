@@ -13,7 +13,7 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 * Run the ansible playbook `ansible-playbook install.yml`
 * Run the ansible playbook `ansible-playbook config.yml`
 * Run the ansible playbook `ansible-playbook commands.yml -e command=start`
-* Create initial admin user: `vagrant ssh; cd app_dir; rake spotlight:admin`
+* Create initial admin user: `vagrant ssh -c 'cd <app_dir>; rake spotlight:admin'`
 
 ### Testing / Production:
 
