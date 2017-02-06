@@ -15,6 +15,8 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 * Run the ansible playbook `ansible-playbook commands.yml -e command=start`
 * Create initial admin user: `vagrant ssh -c 'cd <app_dir>; rake spotlight:admin'`
 
+The Spotlight server will start on http://172.16.21.2:3000/ unless the IP was changed in the Vagrantfile.
+
 ### Testing / Production:
 
 * Clone this [repository][GH]
