@@ -40,6 +40,7 @@ ansible.cfg: $(SSHCONFIG) $(INVENTORY)
 	@echo '' >> $@
 	@echo '[ssh_connection]' >> $@
 	@echo 'ssh_args = -C -o ControlMaster=auto -o ControlPersist=60s -F $(SSHCONFIG)' >> $@
+	@echo 'pipelining = true' >> $@
 
 $(SSHCONFIG): $(wildcard .vagrant/machines/*/*/id) Vagrantfile
 	@echo "Creating $@"
