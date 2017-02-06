@@ -5,21 +5,14 @@
   vars_files:
     - vars.yml
 
+  vars_prompt:
+    name: command
+    prompt: "Do you wish to [start] or [stop] the Spotlight server? (command)"
+    private: no
+
   tasks:
 
     # Document commands
-    - block:
-      - name: Command specified
-        assert:
-          that: command is defined
-
-      rescue:
-        - debug:
-            msg: |
-              Use "-e command=<command>" to perform the following tasks:
-                start: start the blacklight server
-                stop: stop the blacklight server
-
     - name: Start the Spotlight server
       command: rails server --binding=0.0.0.0 --daemon
       args:
