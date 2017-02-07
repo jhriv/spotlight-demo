@@ -112,7 +112,7 @@
       command: 'rails {{ item }}'
       args:
         chdir: '{{ app_dir }}'
-        #creates: ???
+        creates: 'config/locales/devise_invitable.en.yml'
       with_items:
         - 'generate devise_invitable:install'
         - 'generate devise_invitable User'
