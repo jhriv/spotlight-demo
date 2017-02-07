@@ -109,13 +109,13 @@
         creates: db/schema.rb
 
     - name: 'Work around bugs'
-      command: 'rails {{ item }}'
+      command: 'rails {{ item.command }}'
       args:
         chdir: '{{ app_dir }}'
-        creates: 'config/locales/devise_invitable.en.yml'
+        creates: '{{ item.creates }}'
       with_items:
-        - 'generate devise_invitable:install'
-        - 'generate devise_invitable User'
+        - { command: 'generate devise_invitable:install', creates: 'config/locales/devise_invitable.en.yml' }
+        - { command: 'generate devise_invitable User',    creates: 'db/migrate/*_devise_invitable_add_to_users.rb' }
 
     - name: 'Initial database migrate'
       command: 'rake db:migrate'
