@@ -108,6 +108,15 @@
         chdir: '{{ app_dir }}'
         creates: db/schema.rb
 
+    - name: 'Work around bugs'
+      command: 'rails {{ item }}'
+      args:
+        chdir: '{{ app_dir }}'
+        #creates: ???
+      with_items:
+        - 'generate devise_invitable:install'
+        - 'generate devise_invitable User'
+
     - name: 'Initial database migrate'
       command: 'rake db:migrate'
       args:
