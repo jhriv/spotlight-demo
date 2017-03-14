@@ -49,5 +49,5 @@ Optional:
 
 [BL]: http://projectblacklight.org
 [SL]: https://github.com/projectblacklight/spotlight
-[GH]: https://github.com/jhriv/spotlight-demo.git
+[GH]: https://github.com/ucsdlib/spotlight-demo.git
 [BLQS]: https://github.com/projectblacklight/blacklight/wiki/Quickstart
