@@ -40,6 +40,9 @@
         - zlib1g-dev
         - libsqlite3-dev
         - build-essential
+        - libicu-dev
+        - cmake
+        - pkg-config
 
     - name: "Install additional deps"
       package:
