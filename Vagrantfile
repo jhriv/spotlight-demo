@@ -13,7 +13,7 @@ DEFAULT_BOX=ENV.fetch('DEFAULT_BOX', 'centos/7')
 #     variable. Default none.
 # If there are multiple systems, the first one will be marked "primary"
 guests = [
-  { :name => 'spotlight', :box => 'ubuntu/trusty64', :ip => '172.16.21.2', :memory=>'1024', },
+  { :name => 'spotlight', :box => 'ubuntu/trusty64', :ip => '172.16.21.2', :memory=>'2048', },
 ]
 
 Vagrant.configure(2) do |config|
