@@ -16,7 +16,7 @@ DEFAULT_BOX=ENV.fetch('DEFAULT_BOX', 'centos/7')
 #     (Debian/Ubuntu only)
 # If there are multiple systems, the first one will be marked "primary"
 guests = [
-  { :name => 'spotlight', :box => 'ubuntu/trusty64', :ip => '172.16.21.2', :memory=>'1024', :sync => true, :needs_python => true, },
+  { :name => 'spotlight', :box => 'ubuntu/xenial64', :memory=>'2048', :sync => true, :needs_python => true, },
   #{ :name => 'default' },
   #{ :name => 'web1', :box => 'centos/6', :ip => '2' },
   #{ :name => 'web2', :ip => '192.168.1.3' },
