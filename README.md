@@ -12,7 +12,7 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 * Cache java and solr `ansible-playbook roles/*/helpers/download.yml`
 * Run the ansible playbooks `ansible-playbook setup.yml install.yml config.yml`
 * Run the ansible playbook `ansible-playbook commands.yml -e command=start`
-* Create initial admin user: `vagrant ssh -c 'cd blacklight; rake spotlight:initialize'`
+* Create initial admin user: `vagrant ssh -c 'cd /vagrant/blacklight; rake spotlight:initialize'`
 
 The Spotlight server will start, and forward to http://127.0.0.1:3000/ unless there was a port collision. Check the `vagrant up` output, if necessary.
 

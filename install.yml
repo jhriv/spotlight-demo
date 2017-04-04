@@ -78,7 +78,7 @@
         state: present
       with_items:
         - 'gem "blacklight", "{{ blacklight_version }}"'
-        - 'gem "blacklight-spotlight", "{{ spotlight_version }}"'
+        - 'gem "blacklight-spotlight", {% if spotlight_reference is defined %}github: "projectblacklight/spotlight", ref: "{{ spotlight_reference }}" {% else %}"{{ spotlight_version }}"{% endif %}'
 
     - name: 'Update Bundle'
       command: 'bundle install'
@@ -115,7 +115,7 @@
       changed_when: db_migrate.stdout != ''
 
     - name: 'Create Solr Core'
-      command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/conf
+      command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/config
       args:
          chdir: '{{ app_dir }}'
          creates: /var/solr/data/{{ solr_core | default ("blacklight-core") }}

@@ -1,9 +1,12 @@
 ---
 
-app_dir: blacklight
+app_dir: /vagrant/blacklight
 
 blacklight_version: '~> 6.0'
-spotlight_version: '0.34.1'
+# If both spotlight_version and spotlight_reference are defined,
+# spotlight_reference takes precedence
+#spotlight_version: '0.34.1'
+spotlight_reference: 'be977407f14cf5835f8d4af2b2201b36c8340f75'
 rails_version: '5.0.2'
 bundler_version: '1.14.4'
 solr_indexer_version: '6.3.0'
