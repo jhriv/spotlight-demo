@@ -36,6 +36,7 @@ Vagrant.configure(2) do |config|
          box.vm.synced_folder '.', '/vagrant', disabled: ! guest[:sync]
       end
       box.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true, id: "Spotlight"
+      box.vm.network "forwarded_port", guest: 8983, host: 8983, auto_correct: true, id: "Solr"
       if guest.has_key?(:ip)
         box.vm.network 'private_network',
           ip: guest[:ip].to_s.match('\.') ? guest[:ip] : "#{IP_NETWORK}.#{guest[:ip].to_s}"
