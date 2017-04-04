@@ -7,7 +7,9 @@
 
   roles:
     #- ucsdlib.java
-    - { role: 'ucsdlib.solr', solr_version: '{{ solr_indexer_version }}', become: true }
+    - name: 'ucsdlib.solr'
+      solr_version: '{{ solr_indexer_version }}'
+      become: true
     #- zzet.rbenv
 
   tasks:
@@ -98,34 +100,19 @@
         creates: 'config/sitemap.rb'
       # Very uncomfortable with this creates flag
 
-    - name: 'Update bundle, again'
-      command: 'bundle install'
-      args:
-        chdir: '{{ app_dir }}'
-      register: bundle
-      changed_when: '"Installing" in bundle.stdout'
-
-    - name: 'Migrate Blacklight to Spotlight'
+    - name: 'Install Spotlight Migrations'
       command: 'rake spotlight:install:migrations'
       args:
         chdir: '{{ app_dir }}'
-        creates: db/schema.rb
-
-    - name: 'Work around bugs'
-      command: 'rails {{ item.command }}'
-      args:
-        chdir: '{{ app_dir }}'
-        creates: '{{ item.creates }}'
-      with_items:
-        - { command: 'generate devise_invitable:install', creates: 'config/locales/devise_invitable.en.yml' }
-        - { command: 'generate devise_invitable User',    creates: 'db/migrate/*_devise_invitable_add_to_users.rb' }
+      register: install_migrations
+      changed_when: install_migrations.stdout != ''
 
     - name: 'Initial database migrate'
       command: 'rake db:migrate'
       args:
         chdir: '{{ app_dir }}'
-      register: rake_out
-      changed_when: rake_out.stdout != ''
+      register: db_migrate
+      changed_when: db_migrate.stdout != ''
 
     - name: 'Create Solr Core'
       command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/conf
