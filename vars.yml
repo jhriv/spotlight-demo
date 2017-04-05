@@ -1,15 +1,18 @@
 ---
 
-app_dir: blacklight
+app_dir: /vagrant/blacklight
 
 blacklight_version: '~> 6.0'
-spotlight_version: '0.32.0'
-rails_version: '5.0.0.1'
-bundler_version: '1.12.0'
+# If both spotlight_version and spotlight_reference are defined,
+# spotlight_reference takes precedence
+#spotlight_version: '0.34.1'
+spotlight_reference: 'be977407f14cf5835f8d4af2b2201b36c8340f75'
+rails_version: '5.0.2'
+bundler_version: '1.14.4'
 solr_indexer_version: '6.3.0'
 
 blacklight_options: '--devise'
 spotlight_options: '-f --openseadragon --mailer_default_url_host=localhost:3000'
 
 # netblock has to match the Vagrantfile
-netblock: '172.16.21.0/24'
+#netblock: '172.16.21.0/24'

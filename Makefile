@@ -1,8 +1,9 @@
 WHOAMI := $(lastword $(MAKEFILE_LIST))
 SSHCONFIG=.ssh-config
 INVENTORY=hosts
-VERSION=0.2.2
-.PHONY: menu all up roles force-roles ping ip update version
+SAMPLEVAGRANTFILE=https://raw.githubusercontent.com/jhriv/vagrant-as-infrastructure/master/Vagrantfile.sample
+VERSION=0.2.6
+.PHONY: menu all clean up roles force-roles Vagrantfile-force ping ip update version
 
 menu:
 	@echo 'up: Create VMs'
@@ -16,11 +17,19 @@ menu:
 	@echo
 	@echo '"make all SSHCONF=sshconf INVENTORY=ansible-inv"'
 	@echo ''
+	@echo 'python: Installs python on Debian systems'
+	@echo 'root-key: Copies vagrant ssh key for root'
+	@echo 'clean: Removes ansible files'
+	@echo 'Vagrantfile-force: Overwrites Vagrantfile with sample Vagrantfile'
 	@echo 'version: Prints current version'
 	@echo 'udpate: Downloads latest version from github'
 	@echo '        WARNING: this *will* overwrite $(WHOAMI).'
 
 all: up roles ansible.cfg $(SSHCONFIG) $(INVENTORY) ip
+
+clean:
+	@echo Removing ansible files
+	@rm -f ansible.cfg $(SSHCONFIG) $(INVENTORY)
 
 up:
 	@vagrant up
@@ -40,7 +49,6 @@ ansible.cfg: $(SSHCONFIG) $(INVENTORY)
 	@echo '' >> $@
 	@echo '[ssh_connection]' >> $@
 	@echo 'ssh_args = -C -o ControlMaster=auto -o ControlPersist=60s -F $(SSHCONFIG)' >> $@
-	@echo 'pipelining = true' >> $@
 
 $(SSHCONFIG): $(wildcard .vagrant/machines/*/*/id) Vagrantfile
 	@echo "Creating $@"
@@ -59,17 +67,28 @@ $(INVENTORY): $(wildcard .vagrant/machines/*/*/id) Vagrantfile
 Vagrantfile:
 	@echo 'Either use "vagrant init <box>" to create a Vagrantfile,'
 	@echo '"cp Vagrantfile.sample Vagrantfile" if you cloned the repo, or download'
-	@echo 'https://github.com/jhriv/vagrant-as-infrastructure/raw/master/Vagrantfile.sample'
+	@echo '$(SAMPLEVAGRANTFILE)'
 	@false
 
-ping:
+Vagrantfile-force:
+	@echo Downloading $(SAMPLEVAGRANTFILE)
+	@curl --output Vagrantfile $(SAMPLEVAGRANTFILE)
+
+ping: ansible.cfg
 	@ansible -m ping all
 
-ip:
-	@ansible -a 'hostname -I' all
+ip: ansible.cfg
+	@ansible -a 'hostname -I' all || { ret=$$?; echo Do you need to install python? \(make python\); exit $$ret; }
+
+python: ansible.cfg
+	@ansible all -m raw -a 'sudo apt-get install --assume-yes python python-apt'
+
+root-key: ansible.cfg
+	@ansible all -b -m file -a 'dest=/root/.ssh state=directory mode=0700 owner=root group=root'
+	@ansible all -b -m copy -a 'src=.ssh/authorized_keys dest=/root/.ssh/authorized_keys remote_src=true'
 
 update:
 	@wget --quiet https://github.com/jhriv/vagrant-as-infrastructure/raw/master/Makefile --output-document=$(WHOAMI)
 
 version:
-	@ echo '$(VERSION)'
+	@echo '$(VERSION)'
