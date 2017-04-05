@@ -5,3 +5,6 @@
 ansible.cfg
 hosts
 roles
+
+# Ignore the rails app
+blacklight
