@@ -10,7 +10,7 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 * Clone this [repository][GH]
 * Bring up the vagrant instance, create ansible-required files `make all`
 * Cache java and solr `ansible-playbook roles/*/helpers/download.yml`
-* Run the ansible playbooks `ansible-playbook setup.yml install.yml config.yml`
+* Run the ansible playbooks `ansible-playbook setup.yml install.yml`
 * Run the ansible playbook `ansible-playbook commands.yml -e command=start`
 * Create initial admin user: `vagrant ssh -c 'cd /vagrant/blacklight; rake spotlight:initialize'`
 
