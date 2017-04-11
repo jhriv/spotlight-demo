@@ -26,9 +26,9 @@
         state: present
       become: true
 
-    - name: "Use Ruby 2.2"
+    - name: "Use Ruby 2.4"
       package:
-        name: ruby2.2
+        name: ruby2.4
         state: present
       become: true
 
@@ -38,7 +38,7 @@
         state: present
       become: true
       with_items:
-        - ruby2.2-dev
+        - ruby2.4-dev
         - zlib1g-dev
         - libsqlite3-dev
         - build-essential
@@ -54,6 +54,7 @@
       with_items:
         - nodejs
         - git
+        - imagemagick
 
     - name: "Install System Gems"
       gem:
