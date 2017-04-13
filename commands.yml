@@ -5,6 +5,9 @@
   vars_files:
     - vars.yml
 
+  vars:
+    - pid_file_path: '{{ app_dir }}/tmp/pids/server.pid'
+
   vars_prompt:
     name: command
     prompt: "Do you wish to [start] or [stop] the Spotlight server? (command)"
@@ -13,18 +16,23 @@
   tasks:
 
     # Document commands
+    - name: Check for PID file
+      stat:
+        path: '{{ pid_file_path }}'
+      register: pid_file
+
+    - name: Get running Spotlight PID
+      command: 'cat {{ pid_file_path }}'
+      register: spotlight_pid
+      changed_when: false
+      when: pid_file.stat.exists
+
     - name: Start the Spotlight server
       command: rails server --binding=0.0.0.0 --daemon
       args:
         chdir: '{{ app_dir }}'
-      when: command == 'start'
-
-    - name: Get running Spotlight PID
-      command: cat '{{ app_dir }}/tmp/pids/server.pid'
-      register: spotlight_pid
-      changed_when: false
-      when: command == 'stop'
+      when: command == 'start' and not pid_file.stat.exists
 
     - name: Stop the Spotlight server
       command: kill --signal=INT '{{ spotlight_pid.stdout }}'
-      when: command == 'stop'
+      when: command == 'stop' and pid_file.stat.exists
