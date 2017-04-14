@@ -5,7 +5,14 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 
 ## Instructions:
 
-### Vagrant:
+### Vagrant Pre-Requisites:
+
+* VirtualBox
+* Vagrant
+* Ansible
+* Git
+
+### Vagrant (manual):
 
 * Clone this [repository][GH]
 * Bring up the vagrant instance, create ansible-required files `make all`
@@ -13,6 +20,13 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 * Run the ansible playbooks `ansible-playbook setup.yml install.yml`
 * Run the ansible playbook `ansible-playbook commands.yml -e command=start`
 * Create initial admin user: `vagrant ssh -c 'cd /vagrant/blacklight; rake spotlight:initialize'`
+
+The Spotlight server will start, and forward to http://127.0.0.1:3000/ unless there was a port collision. Check the `vagrant up` output, if necessary.
+
+### Vagrant (scripted):
+
+* Clone this [repository][GH]
+* Run the `helpers/setup.sh` script
 
 The Spotlight server will start, and forward to http://127.0.0.1:3000/ unless there was a port collision. Check the `vagrant up` output, if necessary.
 
