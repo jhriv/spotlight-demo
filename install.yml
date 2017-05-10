@@ -63,7 +63,7 @@
         user_install: false
       become: true
       with_items:
-        #- { gem: 'solr_wrapper' }
+        - { gem: 'solr_wrapper' }
         - { gem: 'bundler', version: '{{ bundler_version }}' }
         - { gem: 'rails', version: '{{ rails_version }}' }
 
@@ -78,11 +78,11 @@
         line: '{{ item }}'
         state: present
       with_items:
-        - 'gem "blacklight", "{{ blacklight_version }}"'
+        - 'gem "blacklight", {% if blacklight_reference is defined %}github: "projectblacklight/blacklight", ref: "{{ blacklight_reference }}" {% else %}"{{ blacklight_version }}"{% endif %}'        
         - 'gem "blacklight-spotlight", {% if spotlight_reference is defined %}github: "projectblacklight/spotlight", ref: "{{ spotlight_reference }}" {% else %}"{{ spotlight_version }}"{% endif %}'
 
     - name: 'Update Bundle'
-      command: 'bundle install'
+      command: 'bundle update'
       args:
         chdir: '{{ app_dir }}'
       register: bundle
@@ -100,6 +100,13 @@
         chdir: '{{ app_dir }}'
         creates: 'config/sitemap.rb'
       # Very uncomfortable with this creates flag
+
+    - name: 'Update Bundle'
+      command: 'bundle update'
+      args:
+        chdir: '{{ app_dir }}'
+      register: bundle
+      changed_when: '"Installing" in bundle.stdout'
 
     - name: 'Install Spotlight Migrations'
       command: 'rake spotlight:install:migrations'
