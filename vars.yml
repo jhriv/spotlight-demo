@@ -3,6 +3,7 @@
 app_dir: /vagrant/blacklight
 
 blacklight_version: '~> 6.0'
+blacklight_reference: 'c25e52ccb8f48ff47f37fdc6c93bc88c2ad94cf2'
 # If both spotlight_version and spotlight_reference are defined,
 # spotlight_reference takes precedence
 #spotlight_version: '0.34.1'
