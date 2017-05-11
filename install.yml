@@ -20,7 +20,7 @@
         #use: service
       become: true
 
-    - name: "Add Brightbox PPA (Ruby 2.2)"
+    - name: "Add Brightbox PPA (Ruby 2.4)"
       apt_repository:
         repo: 'ppa:brightbox/ruby-ng'
         state: present
@@ -78,7 +78,7 @@
         line: '{{ item }}'
         state: present
       with_items:
-        - 'gem "blacklight", {% if blacklight_reference is defined %}github: "projectblacklight/blacklight", ref: "{{ blacklight_reference }}" {% else %}"{{ blacklight_version }}"{% endif %}'        
+        - 'gem "blacklight", {% if blacklight_reference is defined %}github: "projectblacklight/blacklight", ref: "{{ blacklight_reference }}" {% else %}"{{ blacklight_version }}"{% endif %}'
         - 'gem "blacklight-spotlight", {% if spotlight_reference is defined %}github: "projectblacklight/spotlight", ref: "{{ spotlight_reference }}" {% else %}"{{ spotlight_version }}"{% endif %}'
 
     - name: 'Update Bundle'
