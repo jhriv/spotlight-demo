@@ -70,7 +70,7 @@
     - name: 'Create new rails application'
       command: 'rails new {{ app_dir }}'
       args:
-          creates: '{{ app_dir }}'
+          creates: '{{ app_dir }}/bin/rails'
 
     - name: 'Add Spotlight to Gemfile'
       lineinfile:
