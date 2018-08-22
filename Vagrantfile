@@ -5,41 +5,45 @@
 IP_NETWORK=ENV.fetch('IP_NETWORK','172.16.1')
 DEFAULT_BOX=ENV.fetch('DEFAULT_BOX', 'centos/7')
 
-# List guests here, one per line.
-# :name, name of the box
-# :box (optional), box to build from. Default DEFAULT_BOX
-# :ip (optional), IP address for local networking. Can be full dotted quad
-#     or the last octet, which will be appended to the IP_NETWORK environmental
-#     variable. Default none.
-# :sync (optional) Should /vagrant be mounted? Default false
-# :needs_python (optional) Install python packages? Default false
-#     (Debian/Ubuntu only)
-# If there are multiple systems, the first one will be marked "primary"
-guests = [
-  { :name => 'spotlight', :box => 'ubuntu/xenial64', :memory=>'2048', :sync => true, :needs_python => true, },
-  #{ :name => 'default' },
-  #{ :name => 'web1', :box => 'centos/6', :ip => '2' },
-  #{ :name => 'web2', :ip => '192.168.1.3' },
-  #{ :name => 'db1' },
-  #{ :name => 'app', :sync => true },
-  #{ :name => 'datastore', :box => 'ubuntu/xenial64', :needs_python => true },
-]
+# List guests separately
+require_relative 'GUESTS';
 
 Vagrant.configure(2) do |config|
-  guests.each_with_index do |guest, i|
+  GUESTS.each_with_index do |guest, i|
     config.vm.define "#{guest[:name]}", primary: i==0 do |box|
       box.vm.box_check_update = false
+      # OS
       box.vm.box = ( guest.key?(:box) ? guest[:box] : DEFAULT_BOX )
       unless guest.has_key?(:sync)
          box.vm.synced_folder '.', '/vagrant', disabled: true
       else
          box.vm.synced_folder '.', '/vagrant', disabled: ! guest[:sync]
       end
-      box.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true, id: "Spotlight"
-      box.vm.network "forwarded_port", guest: 8983, host: 8983, auto_correct: true, id: "Solr"
+      # IP
       if guest.has_key?(:ip)
-        box.vm.network 'private_network',
-          ip: guest[:ip].to_s.match('\.') ? guest[:ip] : "#{IP_NETWORK}.#{guest[:ip].to_s}"
+        if guest[:ip] == 'dhcp'
+          box.vm.network 'private_network', type: guest[:ip]
+        else
+          box.vm.network 'private_network',
+            ip: guest[:ip].to_s.match('\.') ? guest[:ip] : "#{IP_NETWORK}.#{guest[:ip].to_s}"
+        end
+      end
+      # Port forwarding
+      if guest.has_key?(:ports)
+        guest[:ports].each do |port|
+          if port.is_a? Integer
+            box.vm.network "forwarded_port", guest: port, host: port
+          else # elif port.is_a? Hash
+            box.vm.network "forwarded_port",
+              guest:        port[:guest],
+              auto_correct: port.has_key?(:auto_correct) ? port[:auto_correct] : true,
+              guest_ip:     port.has_key?(:guest_ip)     ? port[:guest_ip]     : nil,
+              host_ip:      port.has_key?(:host_ip)      ? port[:host_ip]      : nil,
+              host:         port.has_key?(:host)         ? port[:host]         : port[:guest],
+              id:           port.has_key?(:id)           ? port[:id]           : nil,
+              protocol:     port.has_key?(:protocol)     ? port[:protocol]     : nil
+          end
+        end
       end
       # Provider specific settings
       box.vm.provider "virtualbox" do |v|
@@ -61,8 +65,24 @@ Vagrant.configure(2) do |config|
       if guest.has_key?(:needs_python) && guest[:needs_python]
         box.vm.provision 'shell',
           inline: <<-'SCRIPT'
-            apt-get update
-            apt-get install --assume-yes python python-apt
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update  --quiet=2
+            apt-get install --quiet=2 --option=Dpkg::Use-Pty=0 --assume-yes python python-apt
+          SCRIPT
+      end
+      if guest.has_key?(:update) && guest[:update]
+        box.vm.provision 'shell',
+          inline: <<-'SCRIPT'
+            if command -v apt-get > /dev/null; then
+              export DEBIAN_FRONTEND=noninteractive
+              echo apty
+              apt-get update  --quiet=2
+              apt-get upgrade --quiet=2 --option=Dpkg::Use-Pty=0 --assume-yes
+            fi
+            if command -v yum > /dev/null; then
+              yum upgrade --quiet --assumeyes
+              echo yummy
+            fi
           SCRIPT
       end
     end

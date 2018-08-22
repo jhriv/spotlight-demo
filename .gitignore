@@ -1,10 +1,6 @@
 *.log
-*.retry
+.ansible-retry
+.inventory
 .ssh-config
 .vagrant
 ansible.cfg
-hosts
-roles
-
-# Ignore the rails app
-blacklight
