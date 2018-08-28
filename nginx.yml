@@ -1,0 +1,40 @@
+---
+
+- name: Install NGINX
+  hosts: spotlight
+
+  roles:
+    - { name: nginxinc.nginx,
+        install_from: '{{ nginx_install_from }}',
+        become: true,
+      }
+
+  tasks:
+    - name: Set up reverse proxy
+      template:
+        dest: /etc/nginx/sites-available/reverse-proxy.conf
+        src: reverse-proxy.conf.j2
+      become: true
+      notify: Reload NGINX
+
+    - name: Link reverse proxy to sites-enabled
+      file:
+        path: /etc/nginx/sites-enabled/reverse-proxy.conf
+        src: ../sites-available/reverse-proxy.conf
+        state: link
+      become: true
+      notify: Reload NGINX
+
+    - name: Remove default site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      become: true
+      notify: Reload NGINX
+
+  handlers:
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded
+      become: true
