@@ -1,0 +1,37 @@
+---
+
+
+- name: Get database version
+  command: ./bin/rails db:version
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: false
+  register: app_db_version
+
+- name: Load initial schema
+  command: ./bin/rails db:schema:load
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: true
+  when: 'app_db_version.stdout == "Current version: 0"'
+
+- name: Get migration status
+  command: ./bin/rails db:migrate:status
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: false
+  register: app_db_migration_status
+
+- name: Migrate database
+  command: ./bin/rails db:migrate
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: true
+  when: '( app_db_migration_status.stdout_lines[-1] | regex_search("^  down ")) != none'
+
+- name: Precompile assets
+  command: ./bin/rails assets:precompile
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: '" INFO -- : Writing " in app_assets_precompile.stderr_lines[-1]'
+  register: app_assets_precompile

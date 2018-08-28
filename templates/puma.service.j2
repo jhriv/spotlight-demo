@@ -1,0 +1,19 @@
+[Unit]
+Description=Puma Rails Server
+After=network.target
+
+[Service]
+Type=simple
+User={{ ansible_user_id }}
+EnvironmentFile={{ app_dir }}/shared/config/.env
+WorkingDirectory={{ app_dir }}/current
+RuntimeDirectory=puma
+RuntimeDirectoryPreserve=restart
+ExecStart={{ ansible_user_dir }}/.rbenv/bin/rbenv exec bundle exec puma --config {{ app_dir }}/shared/config/puma.rb
+ExecStop={{ ansible_user_dir }}/.rbenv/bin/rbenv exec bundle exec pumactl stop
+ExecReload={{ ansible_user_dir }}/.rbenv/bin/rbenv exec bundle exec pumactl --state /run/puma/state phased-restart
+TimeoutSec=15
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

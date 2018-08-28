@@ -1,0 +1,23 @@
+---
+
+- name: Install systemd unit file
+  template:
+    dest: /etc/systemd/system/puma.service
+    src: puma.service.j2
+  become: true
+  register: puma_systemd
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+  changed_when: false
+  when: puma_systemd.changed
+  become: true
+
+- name: Restart puma
+  service:
+    name: puma.service
+    enabled: yes
+    state: restarted
+  become: true
+
+

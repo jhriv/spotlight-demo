@@ -1,0 +1,15 @@
+---
+
+- name: Create shared config directory
+  file:
+    path: '{{ ansistrano_deploy_to }}/shared/config'
+    state: directory
+
+- name: Copy puma config
+  template:
+    dest: '{{ ansistrano_deploy_to }}/shared/config/{{ item.dest }}'
+    src: '{{ item.src }}'
+    mode: '{{ item.mode | default ("omit") }}'
+  loop:
+    - { src: 'puma.rb.j2', dest: 'puma.rb' }
+    - { src: 'environment.j2', dest: '.env', mode: '0400' }

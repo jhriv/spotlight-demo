@@ -1,0 +1,26 @@
+---
+
+- name: testing data aquisition and boolen filter tests
+  hosts: spotlight
+  environment:
+    DATABASE_URL: 'postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
+    RAILS_ENV: '{{ rails_environment }}'
+    SECRET_KEY_BASE: '{{ rails_secret_key }}'
+    PATH: '{{ ansible_user_dir }}/.rbenv/shims:{{ ansible_user_dir }}/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+  tasks:
+    - name: Get migration status
+      command: ./bin/rails db:migrate:status
+      args:
+        chdir: '{{ app_dir }}/current'
+      register: app_db_migration_status
+      changed_when: false
+
+    - debug: var=app_db_migration_status
+    - debug: var=app_db_migration_status.stdout_lines[-1]
+    - debug: msg={{ app_db_migration_status.stdout_lines[-1] | regex_search("^  down ") }}
+    - name: Migrate database
+      debug: msg="would make the migrate"
+      #when: '"  down " in app_db_migration_status.stdout_lines[-1]'
+      #when: 'app_db_migration_status.stdout_lines[-1].match("  down ")'
+      when: ( app_db_migration_status.stdout_lines[-1] | regex_search("^  up ")) != none
+
