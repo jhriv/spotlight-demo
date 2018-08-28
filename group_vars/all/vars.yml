@@ -1,0 +1,80 @@
+---
+
+#solr
+solr_indexer_version: '7.4.0'
+
+# gems
+gem_rails_version: '5.2.1'
+gem_bundler_version: '1.16.4'
+
+# rbenv:
+ruby_version: 2.5.1
+rbenv:
+  env: user
+  version: v1.1.1
+  default_ruby: '{{ ruby_version }}'
+  rubies:
+    - version: '{{ ruby_version }}'
+
+# rails
+rails_environment: production
+rails_secret_key: '{{ vault_rails_secret_key }}'
+
+# puma
+puma_auth_token: '{{ vault_puma_auth_token }}'
+
+#nginx
+nginx_install_from: os_repository
+
+# stuff
+app_dir: '/home/vagrant/my-app'
+
+#postgres
+app_db_name: spotlight_db
+app_db_user: spotlight_user
+app_db_pass: '{{ vault_postgresql_users_password }}'
+app_db_host: localhost
+app_db_port: 5432
+
+postgresql_databases:
+  - name: '{{ app_db_name }}'
+
+postgresql_users:
+  - name: '{{ app_db_user }}'
+    priv: 'ALL'
+    password: '{{ app_db_pass }}'
+    db: spotlight_db
+
+# runtime package dependicies
+runtime_packages:
+  - nodejs
+
+# use `ansible-vault create vault` to set
+# vault_postgresql_users_password: 'password'
+
+# ansistrano
+#ansistrano_deploy_from: '{{ playbook_dir }}' # Where my local project is (relative or absolute path)
+ansistrano_deploy_to: '{{ app_dir }}' # Base path to deploy to.
+ansistrano_version_dir: 'releases' # Releases folder name
+ansistrano_current_dir: 'current' # Softlink name. You should rarely changed it.
+ansistrano_current_via: 'symlink' # Deployment strategy who code should be deployed to current path. Options are symlink or rsync
+ansistrano_keep_releases: 0 # Releases to keep after a new deployment. See "Pruning old releases".
+ansistrano_shared_paths:
+  - public/assets
+ansistrano_deploy_via: 'git'
+
+# ansitrano+git
+ansistrano_git_repo: 'https://github.com/ucsdlib/spotlight-exhibits-demo.git'
+ansistrano_git_branch: 'develop' # What version of the repository to check out. This can be the full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name
+#ansistrano_git_repo_tree: "" # If specified the subtree of the repository to deploy
+#ansistrano_git_identity_key_path: "" # If specified this file is copied over and used as the identity key for the git commands, path is relative to the playbook in which it is used
+#ansistrano_git_identity_key_remote_path: "" # If specified this file on the remote server is used as the identity key for the git commands, remote path is absolute
+# Optional variables, omitted by default
+#ansistrano_git_refspec: ADDITIONAL_GIT_REFSPEC # Additional refspec to be used by the 'git' module. Uses the same syntax as the 'git fetch' command.
+#ansistrano_git_ssh_opts: "-o StrictHostKeyChecking=no" # Additional ssh options to be used in Git
+ansistrano_git_depth: 1 # Additional history truncated to the specified number or revisions
+
+# ansistrano hooks
+ansistrano_after_setup_tasks_file: after-setup-sym.yml
+ansistrano_after_symlink_shared_tasks_file: after-shared-sym.yml
+ansistrano_after_symlink_tasks_file: after-current-sym.yml
