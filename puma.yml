@@ -1,0 +1,7 @@
+---
+
+- name: Set up Puma+systemd
+  hosts: spotlight
+
+  tasks:
+    - include: after-current-sym.yml
