@@ -1,0 +1,10 @@
+---
+
+- hosts: spotlight
+
+  tasks:
+
+    - name: "Set hostname"
+      command: 'hostname {{ inventory_hostname }}'
+      changed_when: false
+      become: true
