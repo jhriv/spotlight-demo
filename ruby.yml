@@ -1,0 +1,23 @@
+---
+
+- name: Install RBENV/Ruby/Rails
+  hosts: spotlight
+
+  roles:
+    - { name: zzet.rbenv, 
+        rbenv_users: [ vagrant ],
+        rbenv_extra_depends: [ libpq-dev ],
+        default_gems_file: '{{ playbook_dir }}/files/default-gems',
+      }
+
+  tasks:
+    - name: "Install gems"
+      gem:
+        name: '{{ item.gem }}'
+        version: '{{ item.version | default ("") }}'
+        executable: '{{ ansible_user_dir }}/.rbenv/shims/gem'
+        state: present
+      become: true
+      with_items:
+        - { gem: 'bundler', version: '{{ gem_bundler_version }}' }
+        - { gem: 'rails', version: '{{ gem_rails_version }}' }
