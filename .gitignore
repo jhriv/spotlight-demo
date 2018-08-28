@@ -3,4 +3,7 @@
 .inventory
 .ssh-config
 .vagrant
+.vaultpassword
 ansible.cfg
+
+roles/
