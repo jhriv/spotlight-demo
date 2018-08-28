@@ -1,0 +1,26 @@
+---
+
+- name: Install Solr
+  hosts: spotlight
+
+  roles:
+    - name: 'ucsdlib.solr'
+      solr_version: '{{ solr_indexer_version }}'
+      become: true
+
+  tasks:
+    - name: 'Start Solr'
+      service:
+        name: solr
+        state: started
+      become: true
+
+    - name: 'Create Solr Core'
+      command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/config
+      args:
+         chdir: '{{ app_dir }}/current'
+         creates: /var/solr/data/{{ solr_core | default ("blacklight-core") }}
+      become: true
+      become_user: solr
+      tags:
+         - solr_core
