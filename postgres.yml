@@ -1,0 +1,8 @@
+---
+
+- name: Install postgresql server
+  hosts: spotlight
+
+  roles:
+    - name: geerlingguy.postgresql
+      become: true
