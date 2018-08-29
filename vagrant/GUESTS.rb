@@ -17,7 +17,13 @@
 
 GUESTS = [
   #{ name: 'spotlight', box: 'ubuntu/xenial64', memory: '2048', sync: true, needs_python: true, },
-  { name: 'spotlight', box: 'ubuntu/bionic64', memory: '2048', sync: true, needs_python: true, },
+  { name: 'spotlight', 
+    box: 'ubuntu/bionic64', 
+    memory: '2048', 
+    sync: true, 
+    needs_python: true, 
+    ports: [ { guest: 80, host: 8000 } ],
+  },
   #{ name: 'web1', box: 'centos/6', ip: '2' },
   #{ name: 'web2', ip: '192.168.1.3' },
   #{ name: 'db1' },
