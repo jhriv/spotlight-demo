@@ -1,5 +1,12 @@
 ---
 
+- name: Install app gems
+  command: ./bin/bundle install
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  register: app_bundle_gems
+  changed_when: 'app_bundle_gems.stdout | regex_search ("Fetching")'
+  # searching for "Fetching isn't perfect, but it's good enough
 
 - name: Get database version
   command: ./bin/rails db:version
@@ -7,6 +14,17 @@
     chdir: '{{ ansistrano_release_path.stdout }}'
   changed_when: false
   register: app_db_version
+
+
+  # http://localhost:8983/solr/admin/cores?action=STATUS returns list of cores in JSON
+  # http://localhost:8983/solr/admin/cores?action=STATUS&core=blacklight-core for more direct query
+- name: 'Create Solr Core'
+  command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/config
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+    creates: /var/solr/data/{{ solr_core | default ("blacklight-core") }}
+  become: true
+  become_user: solr
 
 - name: Load initial schema
   command: ./bin/rails db:schema:load
