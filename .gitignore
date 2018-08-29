@@ -1,9 +1,2 @@
-*.log
-.ansible-retry
-.inventory
-.ssh-config
-.vagrant
 .vaultpassword
-ansible.cfg
-
-roles/
+files/default-gems
