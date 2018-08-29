@@ -1,0 +1,17 @@
+---
+
+- name: Set the vgrant box hostname
+  hosts: spotlight
+
+  tasks:
+
+    - name: 'Get hostname'
+      command: hostname
+      changed_when: false
+      register: vagrant_hostname
+
+    - name: 'Set hostname'
+      command: 'hostname {{ inventory_hostname }}'
+      changed_when: true
+      become: true
+      when: vagrant_hostname.stdout != inventory_hostname
