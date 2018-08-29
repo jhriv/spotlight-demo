@@ -1,0 +1,4 @@
+{% for gem in gems_required %}
+{{ gem.name }}{% if gem.version is defined %} {{ gem.version }}{% endif %}
+
+{% endfor %}
