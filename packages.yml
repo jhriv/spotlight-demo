@@ -8,5 +8,6 @@
       package:
         name: '{{ item }}'
         state: present
+      become: true
       loop:
         - '{{ runtime_packages }}'
