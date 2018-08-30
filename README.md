@@ -18,7 +18,7 @@ Attempting to get a working production prototype of [Project Blacklight][BL] + [
 * Change go the _vagrant_ directorry `cd vagrant`
 * Bring up the vagrant instance, create ansible-required files `make all`
 * Cache java and solr `ansible-playbook roles/*/helpers/download.yml`
-* Run the ansible playbooks `ansible-playbook vagrant-site.yml`
+* Run the ansible playbooks `ansible-playbook vagrant-main.yml`
 
 The Spotlight server will start, and forward to http://127.0.0.1:8000/ unless there was a port collision. Check the `vagrant up` output, if necessary.
 
@@ -33,18 +33,18 @@ The Spotlight server will start, and forward to http://127.0.0.1:8000/ unless th
 
 * Clone this [repository][GH]
 * Create appropriate ansible inventory file(s)
-* Run the ansible playbook `ansible-playbook site.yml`
+* Run the ansible playbook `ansible-playbook main.yml`
 
 ## Playbooks
 
 * `after-*-sym.yml` Ansistrano.deploy hooks
 * `config.yml` Allows the local network to access the console
 * `deploy.yml` Deploys latest version of app
+* `main.yml` Does it all
 * `nginx.yml` Installs, configures, starts web server
 * `packages.yml` Installs OS required packages
 * `puma.yml` Installs app server (part of Ansitrano.deploy)
 * `ruby.yml` Installs rbenv
-* `site.yml` Does it all
 * `solr.yml` Installs Solr
 
 ## TODO BEFORE PRODUCTION
