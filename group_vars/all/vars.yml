@@ -29,7 +29,6 @@ ruby_extra:
 # rails
 rails_environment: production
 rails_master_key: '{{ vault_rails_master_key }}'
-rails_secret_key: '{{ vault_rails_secret_key }}'
 
 # puma
 puma_auth_token: '{{ vault_puma_auth_token }}'

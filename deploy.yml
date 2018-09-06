@@ -5,9 +5,9 @@
 
   environment:
     DATABASE_URL: 'postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
-    RAILS_ENV: '{{ rails_environment }}'
-    SECRET_KEY_BASE: '{{ rails_secret_key }}'
     PATH: '{{ ansible_user_dir }}/.rbenv/shims:{{ ansible_user_dir }}/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+    RAILS_ENV: '{{ rails_environment }}'
+    RAILS_MASTER_KEY: '{{ rails_master_key }}'
 
   roles:
     -  { name: ansistrano.deploy }
