@@ -25,6 +25,7 @@ The Spotlight server will start, and forward to http://127.0.0.1:8000/ unless th
 ### Vagrant (scripted):
 
 * Clone this [repository][GH]
+* cd to the vagrant directory
 * Run the `helpers/setup.sh` script
 
 The Spotlight server will start, and forward to http://127.0.0.1:8000/ unless there was a port collision. Check the `vagrant up` output, if necessary.
