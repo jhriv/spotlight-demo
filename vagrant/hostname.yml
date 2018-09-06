@@ -1,6 +1,6 @@
 ---
 
-- name: Set the vgrant box hostname
+- name: Set the vagrant box hostname
   hosts: spotlight
 
   tasks:
