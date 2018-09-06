@@ -2,7 +2,7 @@
 
 - name: Install systemd unit file
   template:
-    dest: /etc/systemd/system/puma.service
+    dest: /etc/systemd/system/{{ app_dir | basename }}.service
     src: puma.service.j2
   become: true
   register: puma_systemd
@@ -15,7 +15,7 @@
 
 - name: Restart puma
   service:
-    name: puma.service
+    name: '{{ app_dir | basename }}.service'
     enabled: yes
     state: restarted
   become: true
