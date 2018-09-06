@@ -10,6 +10,15 @@
       }
 
   tasks:
+    - name: CentOS needs a sites-available and -enabled
+      file:
+        path: /etc/nginx/{{ item }}
+        state: directory
+      become: true
+      loop:
+        - sites-available
+        - sites-enabled
+
     - name: Set up reverse proxy
       template:
         dest: /etc/nginx/sites-available/reverse-proxy.conf

@@ -1,0 +1,15 @@
+---
+
+- name: Install OS provided Java
+  hosts: spotlight
+
+  tasks:
+    - debug: 'msg={{ solr_java_package[ ansible_os_family ] }}'
+    - name: Install OpenJDK (headless)
+      package:
+        name: '{{ item }}'
+        state: present
+      become: true
+      loop:
+        - '{{ solr_java_package[ ansible_os_family ] }}'
+

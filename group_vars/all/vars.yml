@@ -3,6 +3,12 @@
 #solr
 solr_indexer_version: '7.4.0'
 
+#java, for solr
+solr_java_version: 8
+solr_java_package:
+  RedHat: 'java-1.{{ solr_java_version }}.0-openjdk-headless'
+  Debian: 'openjdk-{{ solr_java_version }}-jdk-headless'
+
 # default gems
 gems_required:
   - { name: 'bundler', version: '1.16.4' }
@@ -16,6 +22,9 @@ rbenv:
   default_ruby: '{{ ruby_version }}'
   rubies:
     - version: '{{ ruby_version }}'
+ruby_extra:
+  RedHat: postgresql-devel
+  Debian: libpq-dev
 
 # rails
 rails_environment: production
