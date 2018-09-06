@@ -85,6 +85,6 @@ ansistrano_git_branch: 'develop' # What version of the repository to check out. 
 ansistrano_git_depth: 1 # Additional history truncated to the specified number or revisions
 
 # ansistrano hooks
-ansistrano_after_setup_tasks_file: after-setup-sym.yml
-ansistrano_after_symlink_shared_tasks_file: after-shared-sym.yml
-ansistrano_after_symlink_tasks_file: after-current-sym.yml
+ansistrano_after_setup_tasks_file: deploy-hooks/after-setup-sym.yml
+ansistrano_after_symlink_shared_tasks_file: deploy-hooks/after-shared-sym.yml
+ansistrano_after_symlink_tasks_file: deploy-hooks/after-current-sym.yml

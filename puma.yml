@@ -4,4 +4,4 @@
   hosts: spotlight
 
   tasks:
-    - include: after-current-sym.yml
+    - include: deploy-hooks/after-current-sym.yml
