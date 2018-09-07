@@ -9,37 +9,69 @@
         become: true,
       }
 
+  pre_tasks:
+    - name: Install EPEL
+      yum:
+        name: epel-release
+        state: present
+      become: true
+      when: ansible_os_family == 'RedHat'
+
   tasks:
-    - name: CentOS needs a sites-available and -enabled
-      file:
-        path: /etc/nginx/{{ item }}
-        state: directory
-      become: true
-      loop:
-        - sites-available
-        - sites-enabled
 
-    - name: Set up reverse proxy
-      template:
-        dest: /etc/nginx/sites-available/reverse-proxy.conf
-        src: reverse-proxy.conf.j2
-      become: true
-      notify: Reload NGINX
+    # Debian/Ubuntu
+    - block:
 
-    - name: Link reverse proxy to sites-enabled
-      file:
-        path: /etc/nginx/sites-enabled/reverse-proxy.conf
-        src: ../sites-available/reverse-proxy.conf
-        state: link
-      become: true
-      notify: Reload NGINX
+      - name: Set up reverse proxy
+        template:
+          dest: /etc/nginx/sites-available/{{ item }}
+          src: '{{ item }}.j2'
+        become: true
+        notify: Reload NGINX
+        loop:
+          - reverse-proxy.conf
 
-    - name: Remove default site
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-      become: true
-      notify: Reload NGINX
+      - name: Link reverse proxy to sites-enabled
+        file:
+          path: /etc/nginx/sites-enabled/reverse-proxy.conf
+          src: ../sites-available/reverse-proxy.conf
+          state: link
+        become: true
+        notify: Reload NGINX
+
+      - name: Remove default site
+        file:
+          path: /etc/nginx/sites-enabled/default
+          state: absent
+        become: true
+        notify: Reload NGINX
+
+      when: ansible_os_family == 'Debian'
+    # Debian/Ubuntu
+
+    # RedHat/CentOS
+    - block:
+
+      - name: Replace nginx.conf
+        template:
+          dest: /etc/nginx/{{ item }}
+          src: '{{ item }}.j2'
+        become: true
+        notify: Reload NGINX
+        loop:
+          - nginx.conf
+
+      - name: Set up reverse proxy
+        template:
+          dest: /etc/nginx/conf.d/{{ item }}
+          src: '{{ item }}.j2'
+        become: true
+        notify: Reload NGINX
+        loop:
+          - reverse-proxy.conf
+
+      when: ansible_os_family == 'RedHat'
+    # RHEL/CentOS
 
   handlers:
     - name: Reload NGINX

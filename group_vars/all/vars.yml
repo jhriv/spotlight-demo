@@ -23,7 +23,9 @@ rbenv:
   rubies:
     - version: '{{ ruby_version }}'
 ruby_extra:
-  RedHat: postgresql-devel
+  RedHat:
+    - gcc-c++
+    - postgresql-devel
   Debian: libpq-dev
 
 # rails
