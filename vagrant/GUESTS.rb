@@ -29,7 +29,6 @@ GUESTS = [
     memory: '2048',
     ports: [ { guest: 80, host: 8008 } ],
   },
-  { name: 'centos', box: 'centos/7', },
   #{ name: 'web1', box: 'centos/6', ip: '2' },
   #{ name: 'web2', ip: '192.168.1.3' },
   #{ name: 'db1' },
