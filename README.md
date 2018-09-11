@@ -38,7 +38,7 @@ The Spotlight server will start, and forward to http://127.0.0.1:8000/ unless th
 
 ## Playbooks
 
-* `after-*-sym.yml` Ansistrano.deploy hooks
+* `after-*-sym.yml` [Ansistrano.deploy][AD] hooks
 * `config.yml` Allows the local network to access the console
 * `deploy.yml` Deploys latest version of app
 * `main.yml` Does it all
@@ -65,4 +65,5 @@ Optional:
 [BL]: http://projectblacklight.org
 [SL]: https://github.com/projectblacklight/spotlight
 [GH]: https://github.com/ucsdlib/spotlight-demo.git
+[AD]: https://github.com/ansistrano/deploy#hooks-custom-tasks
 [BLQS]: https://github.com/projectblacklight/blacklight/wiki/Quickstart
