@@ -3,9 +3,4 @@
 - import_playbook: hostname.yml
 - import_playbook: centos.yml
 - import_playbook: postgres.yml
-  #- import_playbook: playbooks/solr.yml
-  #- import_playbook: playbooks/packages.yml
-  #- import_playbook: playbooks/nginx.yml
-  #- import_playbook: playbooks/ruby.yml
-  #- import_playbook: playbooks/deploy.yml
 - import_playbook: playbooks/main.yml
