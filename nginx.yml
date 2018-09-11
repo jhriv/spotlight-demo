@@ -1,0 +1,81 @@
+---
+
+- name: Install NGINX
+  hosts: spotlight
+
+  roles:
+    - { name: nginxinc.nginx,
+        install_from: '{{ nginx_install_from }}',
+        become: true,
+      }
+
+  pre_tasks:
+    - name: Install EPEL
+      yum:
+        name: epel-release
+        state: present
+      become: true
+      when: ansible_os_family == 'RedHat'
+
+  tasks:
+
+    # Debian/Ubuntu
+    - block:
+
+      - name: Set up reverse proxy
+        template:
+          dest: /etc/nginx/sites-available/{{ app_name }}.conf
+          src: '{{ item }}.j2'
+        become: true
+        notify: Reload NGINX
+        loop:
+          - nginx-proxy.conf
+
+      - name: Link reverse proxy to sites-enabled
+        file:
+          path: /etc/nginx/sites-enabled/{{ app_name }}.conf
+          src: ../sites-available/{{ app_name }}.conf
+          state: link
+        become: true
+        notify: Reload NGINX
+
+      - name: Remove default site
+        file:
+          path: /etc/nginx/sites-enabled/default
+          state: absent
+        become: true
+        notify: Reload NGINX
+
+      when: ansible_os_family == 'Debian'
+    # Debian/Ubuntu
+
+    # RedHat/CentOS
+    - block:
+
+      - name: Replace nginx.conf
+        template:
+          dest: /etc/nginx/{{ item }}
+          src: '{{ item }}.j2'
+        become: true
+        notify: Reload NGINX
+        loop:
+          - nginx.conf
+
+      - name: Set up reverse proxy
+        template:
+          dest: /etc/nginx/conf.d/{{ item }}
+          src: '{{ item }}.j2'
+        become: true
+        notify: Reload NGINX
+        loop:
+          - reverse-proxy.conf
+
+      when: ansible_os_family == 'RedHat'
+    # RHEL/CentOS
+
+  handlers:
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded
+      become: true

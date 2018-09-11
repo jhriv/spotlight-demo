@@ -13,7 +13,7 @@ done
 
 # Start work from the top level directory
 cd "$( dirname "$0")"
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git rev-parse --show-toplevel)/vagrant"
 
 # Walk through steps
 echo '> Creating Vagrant box..'
@@ -33,10 +33,7 @@ echo '> Caching vendor packages..'
 ansible-playbook roles/*/helpers/download.yml
 
 echo '> Intilizing guest VM and application..'
-ansible-playbook setup.yml install.yml
+ansible-playbook main.yml
 
-echo '> Start the rails application..'
-ansible-playbook commands.yml -e command=start
-
-echo '> Creating the initial admin user..'
-vagrant ssh -c 'cd /vagrant/blacklight; rake spotlight:initialize'
+#echo '> Creating the initial admin user..'
+#vagrant ssh -c 'cd /vagrant/blacklight; rake spotlight:initialize'

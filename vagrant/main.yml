@@ -1,0 +1,6 @@
+---
+
+- import_playbook: hostname.yml
+- import_playbook: centos.yml
+- import_playbook: postgres.yml
+- import_playbook: playbooks/main.yml

@@ -2,9 +2,6 @@
 
 - hosts: spotlight
 
-  vars_files:
-    - vars.yml
-
   tasks:
     - name: Allow IP block to web console
       blockinfile:

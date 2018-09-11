@@ -1,0 +1,17 @@
+---
+
+- name: Install Solr
+  hosts: spotlight
+
+  roles:
+    - name: 'ucsdlib.solr'
+      solr_version: '{{ solr_indexer_version }}'
+      become: true
+
+  tasks:
+    - name: 'Start Solr'
+      service:
+        name: solr
+        enabled: true
+        state: started
+      become: true

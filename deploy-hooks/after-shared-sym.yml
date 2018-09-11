@@ -1,0 +1,55 @@
+---
+
+- name: Install app gems
+  command: ./bin/bundle install
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  register: app_bundle_gems
+  changed_when: 'app_bundle_gems.stdout | regex_search ("Fetching")'
+  # searching for "Fetching isn't perfect, but it's good enough
+
+- name: Get database version
+  command: ./bin/rails db:version
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: false
+  register: app_db_version
+
+
+  # http://localhost:8983/solr/admin/cores?action=STATUS returns list of cores in JSON
+  # http://localhost:8983/solr/admin/cores?action=STATUS&core=blacklight-core for more direct query
+- name: 'Create Solr Core'
+  command: /opt/solr/bin/solr create -c {{ solr_core | default ("blacklight-core") }} -d solr/config
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+    creates: /var/solr/data/{{ solr_core | default ("blacklight-core") }}
+  become: true
+  become_user: solr
+
+- name: Load initial schema
+  command: ./bin/rails db:schema:load
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: true
+  when: 'app_db_version.stdout == "Current version: 0"'
+
+- name: Get migration status
+  command: ./bin/rails db:migrate:status
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: false
+  register: app_db_migration_status
+
+- name: Migrate database
+  command: ./bin/rails db:migrate
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: true
+  when: '( app_db_migration_status.stdout_lines[-1] | regex_search("^  down ")) != none'
+
+- name: Precompile assets
+  command: ./bin/rails assets:precompile
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}'
+  changed_when: '" INFO -- : Writing " in app_assets_precompile.stderr_lines[-1]'
+  register: app_assets_precompile

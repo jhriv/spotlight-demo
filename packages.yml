@@ -1,0 +1,20 @@
+---
+
+- name: Install required runtime dependencies
+  hosts: spotlight
+
+  tasks:
+    - name: Install NodeSource upstream
+      yum:
+        name: https://rpm.nodesource.com/pub_10.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
+        state: present
+      become: true
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install distro packages
+      package:
+        name: '{{ item }}'
+        state: present
+      become: true
+      loop:
+        - '{{ runtime_packages }}'

@@ -1,0 +1,36 @@
+---
+
+- name: Install RBENV/Ruby/Rails
+  hosts: spotlight
+
+  roles:
+    - { name: zzet.rbenv, 
+        rbenv_extra_depends: '{{ ruby_extra[ ansible_os_family ] }}',
+        default_gems_file: '{{ playbook_dir }}/files/default-gems',
+      }
+
+  pre_tasks:
+    - name: 'List default gems'
+      template:
+        src: '{{ item }}.j2'
+        dest: '{{ playbook_dir }}/files/{{ item }}'
+      connection: local
+      loop:
+        - default-gems
+
+  tasks:
+
+    - name: Get gem status
+      command: '{{ ansible_user_dir }}/.rbenv/shims/gem list --quiet {{ item.name }}'
+      changed_when: false
+      register: gem_status
+      when: item is defined
+      loop:
+        '{{ gems_required }}'
+
+    - name: Install gems
+      command: '{{ ansible_user_dir }}/.rbenv/shims/gem install {{ item.item.name }}'
+      register: out
+      changed_when: true
+      when: not item.stdout | regex_search (item.item.name)
+      loop: '{{ gem_status.results }}'
