@@ -27,6 +27,8 @@ ruby_extra:
     - gcc-c++
     - postgresql-devel
   Debian: libpq-dev
+rbenv_users:
+  - '{{ ansible_user_id }}'
 
 # rails
 rails_environment: production
@@ -39,7 +41,8 @@ puma_auth_token: '{{ vault_puma_auth_token }}'
 nginx_install_from: os_repository
 
 # stuff
-app_dir: '/home/vagrant/my-app'
+app_name: '{{ ( ansistrano_git_repo | basename | splitext)[0] }}'
+app_dir: '{{ ansible_user_dir }}/{{ app_name }}'
 
 #postgres
 app_db_name: spotlight_db

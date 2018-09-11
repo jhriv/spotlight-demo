@@ -24,17 +24,17 @@
 
       - name: Set up reverse proxy
         template:
-          dest: /etc/nginx/sites-available/{{ item }}
+          dest: /etc/nginx/sites-available/{{ app_name }}.conf
           src: '{{ item }}.j2'
         become: true
         notify: Reload NGINX
         loop:
-          - reverse-proxy.conf
+          - nginx-proxy.conf
 
       - name: Link reverse proxy to sites-enabled
         file:
-          path: /etc/nginx/sites-enabled/reverse-proxy.conf
-          src: ../sites-available/reverse-proxy.conf
+          path: /etc/nginx/sites-enabled/{{ app_name }}.conf
+          src: ../sites-available/{{ app_name }}.conf
           state: link
         become: true
         notify: Reload NGINX
