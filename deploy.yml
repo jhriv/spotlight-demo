@@ -10,3 +10,10 @@
         PATH: '{{ ansible_user_dir }}/.rbenv/shims:{{ ansible_user_dir }}/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
         RAILS_ENV: '{{ rails_environment }}'
         RAILS_MASTER_KEY: '{{ rails_master_key }}'
+
+  pre_tasks:
+    - name: Install OS dependecies
+      package:
+        name: [ 'rsync', 'acl' ]
+        state: present
+      become: true

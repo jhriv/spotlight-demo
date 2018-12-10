@@ -10,6 +10,12 @@
       }
 
   pre_tasks:
+    - name: Install curl
+      package:
+        name: curl
+        state: present
+      become: true
+
     - name: 'List default gems'
       template:
         src: '{{ item }}.j2'
