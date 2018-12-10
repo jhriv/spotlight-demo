@@ -9,18 +9,18 @@
         file:
           path: '{{ ansible_user_dir }}'
           mode: '0755'
-  
+
       - name: Disable SELinux (nginx network)
         selinux:
           state: disabled
         become: true
         register: selinux
-  
+
       - name: 'Disable SELinux "temporary version"'
         command: setenforce 0
         become: true
         when: selinux.reboot_required
-     
-      # block       
+
+      # block
       when: ansible_os_family == 'RedHat'
 

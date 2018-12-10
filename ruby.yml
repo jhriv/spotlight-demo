@@ -4,7 +4,7 @@
   hosts: spotlight
 
   roles:
-    - { name: zzet.rbenv, 
+    - { name: zzet.rbenv,
         rbenv_extra_depends: '{{ ruby_extra[ ansible_os_family ] }}',
         default_gems_file: '{{ playbook_dir }}/files/default-gems',
       }

@@ -1,7 +1,7 @@
 Spotlight for Exhibits Demo on Vagrant
 ===
 
-Ensure there is a local copy of `.vaultpassword` prior to running `make all`. 
+Ensure there is a local copy of `.vaultpassword` prior to running `make all`.
 
 1. hostname.yml (optional)
 2. postgres.yml (vagrant only)
