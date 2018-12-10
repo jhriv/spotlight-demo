@@ -11,7 +11,7 @@ solr_java_package:
 
 # default gems
 gems_required:
-  - { name: 'bundler', version: '1.16.4' }
+  - { name: 'bundler', version: '1.17.1' }
   - { name: 'rails',   version: '5.2.1'  }
 
 # rbenv:
@@ -26,12 +26,15 @@ ruby_extra:
   RedHat:
     - gcc-c++
     - postgresql-devel
-  Debian: libpq-dev
+    - sqlite-devel
+  Debian:
+    - libpq-dev
+    - libsqlite3-dev
 rbenv_users:
   - '{{ ansible_user_id }}'
 
 # rails
-rails_environment: production
+rails_environment: development
 rails_master_key: '{{ vault_rails_master_key }}'
 
 # puma
@@ -79,7 +82,7 @@ ansistrano_shared_paths:
 
 # ansitrano+git
 ansistrano_deploy_via: 'git'
-ansistrano_git_repo: 'https://github.com/ucsdlib/spotlight-exhibits-demo.git'
+ansistrano_git_repo: 'https://github.com/ucsblibrary/geniza.git'
 ansistrano_git_branch: 'master' # What version of the repository to check out. This can be the full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name
 #ansistrano_git_repo_tree: "" # If specified the subtree of the repository to deploy
 #ansistrano_git_identity_key_path: "" # If specified this file is copied over and used as the identity key for the git commands, path is relative to the playbook in which it is used
