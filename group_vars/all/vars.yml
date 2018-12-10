@@ -34,8 +34,9 @@ rbenv_users:
   - '{{ ansible_user_id }}'
 
 # rails
-rails_environment: development
+rails_environment: production
 rails_master_key: '{{ vault_rails_master_key }}'
+rails_secret_key_base: '{{ vault_secret_key_base | default (omit) }}'
 
 # puma
 puma_auth_token: '{{ vault_puma_auth_token }}'
@@ -53,6 +54,7 @@ app_db_user: spotlight_user
 app_db_pass: '{{ vault_postgresql_users_password }}'
 app_db_host: localhost
 app_db_port: 5432
+rails_database_url: 'postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
 
 postgresql_databases:
   - name: '{{ app_db_name }}'

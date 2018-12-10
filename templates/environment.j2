@@ -1,3 +1,6 @@
-DATABASE_URL='postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
+{% if rails_database_url is defined %}DATABASE_URL='{{ rails_database_url }}'{% endif %}
+
 RAILS_ENV='{{ rails_environment }}'
-RAILS_MASTER_KEY='{{ rails_master_key }}'
+{% if rails_master_key is defined %}RAILS_MASTER_KEY='{{ rails_master_key }}'{% endif %}
+
+{% if rails_secret_key_base is defined %}SECRET_KEY_BASE='{{ rails_secret_key_base }}'{% endif %}

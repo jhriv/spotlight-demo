@@ -6,10 +6,10 @@
   roles:
     - name: ansistrano.deploy
       environment:
-        DATABASE_URL: 'postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
+        DATABASE_URL: '{{ rails_database_url | default (omit) }}'
         PATH: '{{ ansible_user_dir }}/.rbenv/shims:{{ ansible_user_dir }}/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
-        RAILS_ENV: '{{ rails_environment }}'
-        RAILS_MASTER_KEY: '{{ rails_master_key }}'
+        RAILS_ENV: '{{ rails_environment | default ("development") }}'
+        RAILS_MASTER_KEY: '{{ rails_master_key | default (omit) }}'
 
   pre_tasks:
     - name: Install OS dependecies
