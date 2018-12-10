@@ -3,11 +3,10 @@
 - name: Deploys Exhibits App
   hosts: spotlight
 
-  environment:
-    DATABASE_URL: 'postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
-    PATH: '{{ ansible_user_dir }}/.rbenv/shims:{{ ansible_user_dir }}/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
-    RAILS_ENV: '{{ rails_environment }}'
-    RAILS_MASTER_KEY: '{{ rails_master_key }}'
-
   roles:
-    -  { name: ansistrano.deploy }
+    - name: ansistrano.deploy
+      environment:
+        DATABASE_URL: 'postgres://{{ app_db_user }}:{{ app_db_pass }}@{{ app_db_host }}:{{ app_db_port }}/{{ app_db_name }}'
+        PATH: '{{ ansible_user_dir }}/.rbenv/shims:{{ ansible_user_dir }}/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+        RAILS_ENV: '{{ rails_environment }}'
+        RAILS_MASTER_KEY: '{{ rails_master_key }}'
