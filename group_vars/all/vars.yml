@@ -12,10 +12,10 @@ solr_java_package:
 # default gems
 gems_required:
   - { name: 'bundler', version: '1.17.1' }
-  - { name: 'rails',   version: '5.2.1'  }
+  - { name: 'rails',   version: '5.2.2'  }
 
 # rbenv:
-ruby_version: '2.5.1'
+ruby_version: '2.5.3'
 rbenv:
   env: user
   version: v1.1.1
