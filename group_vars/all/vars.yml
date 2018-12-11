@@ -38,6 +38,13 @@ rails_environment: production
 rails_master_key: '{{ vault_rails_master_key }}'
 rails_secret_key_base: '{{ vault_secret_key_base | default (omit) }}'
 
+# LDAP
+ldap_host: ldap.ad.ucsd.edu
+ldap_user: lib-LDAP
+ldap_pass: '{{ vault_ldap_pass }}'
+ldap_group_base: '"ou=Users,ou=University Library,dc=AD,dc=UCSD,dc=EDU"'
+#ldap_filter: sAMAccountName
+
 # puma
 puma_auth_token: '{{ vault_puma_auth_token }}'
 
