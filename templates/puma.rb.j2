@@ -8,3 +8,9 @@ plugin :tmp_restart
 
 state_path '/run/puma/state'
 activate_control_app 'tcp://127.0.0.1:9292', { auth_token: '{{ puma_auth_token }}' }
+
+ssl_bind '127.0.0.1', '3001', {
+ key: '/home/ansible/server.key',
+ cert: '/home/ansible/server.crt',
+ verify_mode: 'none'
+}
