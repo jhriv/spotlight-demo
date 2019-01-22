@@ -54,6 +54,12 @@
   changed_when: '" INFO -- : Writing " in app_assets_precompile.stderr_lines[-1]'
   register: app_assets_precompile
 
+- name: (un)Template secrets.yml
+  copy:
+    dest: '{{ ansistrano_release_path.stdout }}/config/secrets.yml'
+    src: '{{ ansistrano_release_path.stdout }}/config/secrets.yml.template'
+    remote_src: true
+
 - name: Update LDAP
   lineinfile:
     path: '{{ ansistrano_release_path.stdout }}/config/secrets.yml'
